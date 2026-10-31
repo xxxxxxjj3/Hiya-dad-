@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101116">
+<title>VideoZone BD</title>
+
+<style>
+:root {
+  --bg: #101116;
+  --card: #1c1d25;
+  --text: #fff;
+  --muted: #a6a7b3;
+  --accent: #ff3155;
+}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #15161df5;
+  border-bottom: 1px solid #30313a;
+  padding: 15px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.logo span { color: var(--accent); }
+
+button {
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  margin: 7px 0 12px;
+  background: #20212a;
+  border: 1px solid #393a45;
+  border-radius: 8px;
+  color: white;
+}
+
+main { padding: 15px; }
+
+nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 15px;
+}
+
+nav button {
+  white-space: nowrap;
+  background: #292a34;
+}
+
+nav button.active { background: var(--accent); }
+
+.panel {
+  background: var(--card);
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.hidden { display: none !important; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.video {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--card);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background: #292a34;
+}
+
+.info { padding: 10px; }
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ad-container {
+  margin: 20px 0;
+  padding: 15px;
+  text-align: center;
+  min-height: 90px;
+  background: var(--card);
+  border: 1px solid #30313a;
+  border-radius: 10px;
+}
+
+.ad-container p {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ad-container a {
+  color: #fff;
+  background: #292a34;
+  padding: 10px 14px;
+  border-radius: 8px;
+  display: inline-block;
+  text-decoration: none;
+}
+
+#playerModal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: #000e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.player-box {
+  width: min(850px, 100%);
+  padding: 15px;
+  background: var(--card);
+  border-radius: 12px;
+}
+
+#player {
+  width: 100%;
+  max-height: 60vh;
+  aspect-ratio: 16/9;
+  background: black;
+}
+
+footer {
+  padding: 25px;
+  text-align: center;
+  color: var(--muted);
+  border-top: 1px solid #30313a;
+}
+
+@media(max-width:650px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .logo { font-size: 18px; }
+}
+
+@media(min-width:1000px) {
+  main { max-width: 1400px; margin: auto; }
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="top">
+    <div class="logo">VideoZone <span>BD</span></div>
+    <button id="adminBtn">Admin Login</button>
+  </div>
+
+  <input id="search" placeholder="ভিডিও খুঁজুন..." type="search">
+</header>
+
+<nav id="categories">
+  <button class="active" data-cat="সব">সব ভিডিও</button>
+  <button data-cat="Entertainment">Entertainment</button>
+  <button data-cat="Music">Music</button>
+  <button data-cat="Education">Education</button>
+  <button data-cat="Sports">Sports</button>
+</nav>
+
+<main>
+
+  <div class="ad-container">
+    <p>Advertisement</p>
+    <a href="https://www.profitableratecpmnetwork.com/ng0g1m4h?key=b75c023b2ba640c7f0ce0e3c1050f87d"
+       target="_blank" rel="nofollow sponsored noopener">
+      বিজ্ঞাপন দেখুন
+    </a>
+  </div>
+
+  <section id="loginPanel" class="panel hidden">
+    <h2>🔐 Admin Login</h2>
+
+    <form id="loginForm">
+      <input id="username" placeholder="Admin Username"
+             value="MubarakAdmin" required>
+
+      <input id="password" type="password"
+             placeholder="Admin Password" required>
+
+      <button type="submit">Login</button>
+      <button type="button" id="closeLogin"
+              style="background:#41424d">বন্ধ করুন</button>
+    </form>
+
+    <p id="loginMsg" class="muted"></p>
+  </section>
+
+  <section id="dashboard" class="panel hidden">
+    <h2>Admin Dashboard</h2>
+    <p>মোট ভিডিও: <span id="total">0</span></p>
+
+    <form id="videoForm">
+      <input id="vtitle" placeholder="ভিডিওর নাম" required>
+      <input id="vthumb" type="url"
+             placeholder="Thumbnail Image URL" required>
+      <input id="vurl" type="url"
+             placeholder="Direct Video URL" required>
+
+      <select id="vcat">
+        <option>Entertainment</option>
+        <option>Music</option>
+        <option>Education</option>
+        <option>Sports</option>
+      </select>
+
+      <button type="submit">ভিডিও যোগ করুন</button>
+    </form>
+
+    <h3>ভিডিও পরিচালনা</h3>
+    <div id="manage"></div>
+
+    <button id="logout" style="background:#41424d">Logout</button>
+  </section>
+
+  <h2>সর্বশেষ ভিডিও</h2>
+  <p id="count" class="muted"></p>
+  <section id="grid" class="grid"></section>
+  <p id="empty" class="muted hidden">কোনো ভিডিও পাওয়া যায়নি।</p>
+
+  <div class="ad-container">
+    <p>Advertisement</p>
+    <a href="https://www.profitableratecpmnetwork.com/ng0g1m4h?key=b75c023b2ba640c7f0ce0e3c1050f87d"
+       target="_blank" rel="nofollow sponsored noopener">
+      বিজ্ঞাপন দেখুন
+    </a>
+  </div>
+
+</main>
+
+<div id="playerModal" class="hidden">
+  <div class="player-box">
+    <div class="top">
+      <h3 id="playerTitle">ভিডিও</h3>
+      <button id="closePlayer">✕</button>
+    </div>
+    <video id="player" controls playsinline></video>
+  </div>
+</div>
+
+<footer>
+  <strong>VideoZone BD</strong>
+  <p>আপনার পছন্দের ভিডিও এক জায়গায়।</p>
+</footer>
+
+<script>
+const ADMIN_USER = "MubarakAdmin";
+
+/*
+  ডেমো লগইন।
+  প্রকাশিত ওয়েবসাইটে এই পদ্ধতি নিরাপদ নয়।
+  Firebase Authentication ও Firestore Rules
+  সেটআপ না করা পর্যন্ত আসল পাসওয়ার্ড ব্যবহার করবে না।
+*/
+let isAdmin = false;
+let videos = JSON.parse(localStorage.getItem("vz_videos") || "[]");
+let category = "সব";
+
+const $ = id => document.getElementById(id);
+
+function save() {
+  localStorage.setItem("vz_videos", JSON.stringify(videos));
+}
+
+function render() {
+  const term = $("search").value.toLowerCase();
+
+  const list = videos.filter(v =>
+    v.title.toLowerCase().includes(term) &&
+    (category === "সব" || v.category === category)
+  );
+
+  $("count").textContent = list.length + " videos";
+  $("total").textContent = videos.length;
+  $("empty").classList.toggle("hidden", list.length > 0);
+
+  $("grid").innerHTML = list.map(v => `
+    <article class="video" data-play="${v.id}">
+      <img class="thumb" src="${escapeHtml(v.thumb)}"
+           alt="" loading="lazy">
+      <div class="info">
+        <div class="title">${escapeHtml(v.title)}</div>
+        <p class="muted">${escapeHtml(v.category)}</p>
+      </div>
+    </article>
+  `).join("");
+
+  $("manage").innerHTML = isAdmin ? videos.map(v => `
+    <div class="panel">
+      <strong>${escapeHtml(v.title)}</strong><br><br>
+      <button data-del="${v.id}" style="background:#b42338">
+        Delete
+      </button>
+    </div>
+  `).join("") : "";
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[c]);
+}
+
+$("adminBtn").onclick = () => {
+  $("loginPanel").classList.toggle("hidden");
+};
+
+$("closeLogin").onclick = () => {
+  $("loginPanel").classList.add("hidden");
+};
+
+$("loginForm").onsubmit = e => {
+  e.preventDefault();
+
+  /*
+    ডেমো পাসওয়ার্ড: 12345678
+    এটি নিরাপদ নয় এবং শুধু স্থানীয় পরীক্ষার জন্য।
+  */
+  if ($("username").value === ADMIN_USER &&
+      $("password").value === "12345678") {
+    isAdmin = true;
+    $("dashboard").classList.remove("hidden");
+    $("loginPanel").classList.add("hidden");
+    render();
+  } else {
+    $("loginMsg").textContent = "লগইন তথ্য সঠিক নয়।";
+  }
+};
+
+$("logout").onclick = () => {
+  isAdmin = false;
+  $("dashboard").classList.add("hidden");
+  render();
+};
+
+$("videoForm").onsubmit = e => {
+  e.preventDefault();
+  if (!isAdmin) return;
+
+  const url = $("vurl").value.trim();
+  const thumb = $("vthumb").value.trim();
+
+  if (!/^https?:\/\//i.test(url) ||
+      !/^https?:\/\//i.test(thumb)) {
+    alert("সঠিক URL লিখুন।");
+    return;
+  }
+
+  videos.unshift({
+    id: Date.now(),
+    title: $("vtitle").value.trim(),
+    thumb,
+    url,
+    category: $("vcat").value
+  });
+
+  save();
+  $("videoForm").reset();
+  render();
+};
+
+$("manage").onclick = e => {
+  const id = Number(e.target.dataset.del);
+  if (!id || !isAdmin) return;
+
+  if (confirm("ভিডিওটি মুছে ফেলবেন?")) {
+    videos = videos.filter(v => v.id !== id);
+    save();
+    render();
+  }
+};
+
+$("grid").onclick = e => {
+  const card = e.target.closest("[data-play]");
+  if (!card) return;
+
+  const video = videos.find(v => v.id === Number(card.dataset.play));
+  if (!video) return;
+
+  $("playerTitle").textContent = video.title;
+  $("player").src = video.url;
+  $("playerModal").classList.remove("hidden");
+  $("player").play().catch(() => {});
+};
+
+function closePlayer() {
+  $("player").pause();
+  $("player").removeAttribute("src");
+  $("player").load();
+  $("playerModal").classList.add("hidden");
+}
+
+$("closePlayer").onclick = closePlayer;
+$("search").oninput = render;
+
+$("categories").onclick = e => {
+  if (!e.target.dataset.cat) return;
+
+  category = e.target.dataset.cat;
+
+  document.querySelectorAll("#categories button").forEach(b =>
+    b.classList.toggle("active", b === e.target)
+  );
+
+  render();
+};
+
+render();
+</script>
+
+</body>
+</html>
